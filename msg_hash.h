@@ -2,6 +2,7 @@
  *  Copyright (C) 2010-2014 - Hans-Kristian Arntzen
  *  Copyright (C) 2011-2017 - Daniel De Matteis
  *  Copyright (C) 2016-2017 - Brad Parker
+ *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -773,6 +774,7 @@ enum msg_hash_enums
    MENU_LABEL(CONTENT_SHOW_ADD),
    MENU_LABEL(XMB_RIBBON_ENABLE),
    MENU_LABEL(THUMBNAILS),
+   MENU_LABEL(LEFT_THUMBNAILS),
    MENU_LABEL(TIMEDATE_ENABLE),
    MENU_LABEL(BATTERY_LEVEL_ENABLE),
    MENU_LABEL(MATERIALUI_MENU_COLOR_THEME),
@@ -1715,6 +1717,7 @@ enum msg_hash_enums
    MENU_ENUM_LABEL_CB_LAKKA_DOWNLOAD,
    MENU_ENUM_LABEL_CB_LAKKA_LIST,
    MENU_ENUM_LABEL_CB_MENU_THUMBNAIL,
+   MENU_ENUM_LABEL_CB_MENU_LEFT_THUMBNAIL,
    MENU_ENUM_LABEL_CB_MENU_SAVESTATE_THUMBNAIL,
    MENU_ENUM_LABEL_CB_MENU_WALLPAPER,
    MENU_ENUM_LABEL_CB_THUMBNAILS_UPDATER_DOWNLOAD,

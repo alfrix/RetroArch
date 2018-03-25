@@ -2,6 +2,7 @@
  *  Copyright (C) 2010-2014 - Hans-Kristian Arntzen
  *  Copyright (C) 2011-2017 - Daniel De Matteis
  *  Copyright (C) 2016-2017 - Brad Parker
+ *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -630,7 +631,7 @@ void menu_display_draw_bg(menu_display_ctx_draw_t *draw,
    coords.vertex        = new_vertex;
    coords.tex_coord     = new_tex_coord;
    coords.lut_tex_coord = new_tex_coord;
-   coords.color         = (const float*)draw->color;   
+   coords.color         = (const float*)draw->color;
 
    draw->coords         = &coords;
    draw->scale_factor   = 1.0f;
@@ -1024,9 +1025,9 @@ void menu_display_rotate_z(menu_display_ctx_rotate_draw_t *draw,
    math_matrix_4x4 *b = NULL;
 
    if (
-         !draw                       || 
-         !menu_disp                  || 
-         !menu_disp->get_default_mvp || 
+         !draw                       ||
+         !menu_disp                  ||
+         !menu_disp->get_default_mvp ||
          menu_disp->handles_transform
       )
       return;
@@ -1067,6 +1068,22 @@ void menu_display_handle_thumbnail_upload(void *task_data,
 
    load_image_info.data = img;
    load_image_info.type = MENU_IMAGE_THUMBNAIL;
+
+   menu_driver_load_image(&load_image_info);
+
+   image_texture_free(img);
+   free(img);
+   free(user_data);
+}
+
+void menu_display_handle_left_thumbnail_upload(void *task_data,
+      void *user_data, const char *err)
+{
+   menu_ctx_load_image_t load_image_info;
+   struct texture_image *img = (struct texture_image*)task_data;
+
+   load_image_info.data = img;
+   load_image_info.type = MENU_IMAGE_LEFT_THUMBNAIL;
 
    menu_driver_load_image(&load_image_info);
 

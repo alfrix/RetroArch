@@ -3,6 +3,7 @@
  *  Copyright (C) 2011-2016 - Daniel De Matteis
  *  Copyright (C) 2014-2016 - Jean-André Santoni
  *  Copyright (C) 2016 - Brad Parker
+ *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -348,6 +349,7 @@ typedef struct settings
       unsigned video_msg_bgcolor_blue;
 
       unsigned menu_thumbnails;
+      unsigned menu_left_thumbnails;
       unsigned menu_dpi_override_value;
       unsigned menu_entry_normal_color;
       unsigned menu_entry_hover_color;

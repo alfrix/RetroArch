@@ -2,6 +2,7 @@
  *  Copyright (C) 2010-2014 - Hans-Kristian Arntzen
  *  Copyright (C) 2011-2017 - Daniel De Matteis
  *  Copyright (C) 2016-2017 - Brad Parker
+ *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -61,6 +62,7 @@ enum menu_image_type
    MENU_IMAGE_NONE = 0,
    MENU_IMAGE_WALLPAPER,
    MENU_IMAGE_THUMBNAIL,
+   MENU_IMAGE_LEFT_THUMBNAIL,
    MENU_IMAGE_SAVESTATE_THUMBNAIL
 };
 
@@ -119,6 +121,8 @@ enum rarch_menu_ctl_state
    RARCH_MENU_CTL_BIND_INIT,
    RARCH_MENU_CTL_UPDATE_THUMBNAIL_PATH,
    RARCH_MENU_CTL_UPDATE_THUMBNAIL_IMAGE,
+   RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_PATH,
+   RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_IMAGE,
    RARCH_MENU_CTL_UPDATE_SAVESTATE_THUMBNAIL_PATH,
    RARCH_MENU_CTL_UPDATE_SAVESTATE_THUMBNAIL_IMAGE,
    MENU_NAVIGATION_CTL_CLEAR,
@@ -491,6 +495,8 @@ typedef struct menu_ctx_driver
          menu_entry_t *entry, unsigned action);
    void (*update_thumbnail_path)(void *data, unsigned i);
    void (*update_thumbnail_image)(void *data);
+   void (*update_left_thumbnail_path)(void *data, unsigned i);
+   void (*update_left_thumbnail_image)(void *data);
    void (*set_thumbnail_system)(void *data, char* s, size_t len);
    void (*set_thumbnail_content)(void *data, char* s, size_t len);
    int  (*osk_ptr_at_pos)(void *data, int x, int y, unsigned width, unsigned height);
@@ -720,6 +726,9 @@ void menu_display_handle_wallpaper_upload(void *task_data,
       void *user_data, const char *err);
 
 void menu_display_handle_thumbnail_upload(void *task_data,
+      void *user_data, const char *err);
+
+void menu_display_handle_left_thumbnail_upload(void *task_data,
       void *user_data, const char *err);
 
 void menu_display_handle_savestate_thumbnail_upload(void *task_data,

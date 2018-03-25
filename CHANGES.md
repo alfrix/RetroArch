@@ -7,6 +7,7 @@
 - LIBRETRO: Addition - Functions to enable and disable audio and video, and an environment function to query status of audio and video enables.
 - LOCALIZATION: Update Italian translation.
 - MENU: Disable XMB shadow icons by default for PowerPC and ARM for performance reasons.
+- MENU/XMB: Add Left Thumbnails (additional to the right).
 - MENU/XMB: Fixed left/right tab regression.
 - MENU/XMB: Fix scaling of tall images that were cut on bottom previously.
 - MENU/XMB: Menu scale factor setting now changes texts length, image scaling and margins.
@@ -308,7 +309,7 @@ Skipped this one.
 - MISC: Various frontend optimizations.
 - NET: Fix bug #4703 (https://github.com/libretro/RetroArch/issues/4703)
 - OSX/MACOS: Fixes serious memory leak
-- THUMBNAILS: Thumbnails show up now in Load Content -> Collection, Information -> Database 
+- THUMBNAILS: Thumbnails show up now in Load Content -> Collection, Information -> Database
 - VIDEO: Fix threaded video regression; tickering of menu entries would no longer work.
 - VITA: Fix 30fps menu (poke into input now instead of reading the entire input buffer which apparently is slow)
 - VITA: Fix frame throttle

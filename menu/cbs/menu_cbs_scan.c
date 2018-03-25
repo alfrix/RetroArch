@@ -1,5 +1,6 @@
 /*  RetroArch - A frontend for libretro.
  *  Copyright (C) 2011-2017 - Daniel De Matteis
+ *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -105,12 +106,18 @@ int action_switch_thumbnail(const char *path,
       return -1;
 
    settings->uints.menu_thumbnails++;
+   settings->uints.menu_left_thumbnails++;
 
    if (settings->uints.menu_thumbnails > 3)
       settings->uints.menu_thumbnails = 0;
 
+   if (settings->uints.menu_left_thumbnails > 3)
+      settings->uints.menu_left_thumbnails = 0;
+
    menu_driver_ctl(RARCH_MENU_CTL_UPDATE_THUMBNAIL_PATH, NULL);
    menu_driver_ctl(RARCH_MENU_CTL_UPDATE_THUMBNAIL_IMAGE, NULL);
+   menu_driver_ctl(RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_PATH, NULL);
+   menu_driver_ctl(RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_IMAGE, NULL);
 
    return 0;
 }
