@@ -3147,7 +3147,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
    size_t percent_width = 0;
    math_matrix_4x4 mymat;
    unsigned i;
-   float thumb_width, thumb_height;
+   float thumb_width, thumb_height, left_thumb_width, left_thumb_height;
    menu_display_ctx_rotate_draw_t rotate_draw;
    char msg[1024];
    char title_msg[255];
@@ -3278,14 +3278,19 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
 
+      /*TEST*/
+
       float scale_factor            =
-      ((settings->uints.menu_xmb_scale_factor * width) / (1920.0 * 100)) * 1.7;
+      ((settings->uints.menu_xmb_scale_factor * width) / (1920.0 * 100));
+
+      left_thumb_width  = xmb->left_thumbnail_width * scale_factor;
+      left_thumb_height = xmb->left_thumbnail_height * scale_factor;
 
       xmb_draw_thumbnail(video_info,
       xmb, &coord_white[0], width, height,
       xmb->margins_title_left - 10,
-      xmb->margins_screen_top + 1.25 * (xmb->icon_size + xmb->thumbnail_height) / scale_factor,
-      xmb->left_thumbnail_width * scale_factor , xmb->left_thumbnail_height * scale_factor ,
+      xmb->margins_screen_top + xmb->icon_size * 2.2 + left_thumb_height * scale_mod[4],
+      left_thumb_width, left_thumb_height,
       xmb->left_thumbnail);
    }
 
@@ -3570,7 +3575,7 @@ static void xmb_layout_ps3(xmb_handle_t *xmb, int width)
 
 
    xmb->thumbnail_width          = 460.0 * scale_factor;
-   xmb->left_thumbnail_width     = 400.0 * scale_factor;
+   xmb->left_thumbnail_width     = 680.0 * scale_factor;
    xmb->savestate_thumbnail_width= 460.0 * scale_factor;
    xmb->cursor_size              = 64.0 * scale_factor;
 
