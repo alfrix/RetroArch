@@ -511,31 +511,17 @@ static xmb_node_t *xmb_copy_node(const xmb_node_t *old_node)
    return new_node;
 }
 
-static const char *xmb_thumbnails_ident(void)
+static const char *xmb_thumbnails_ident(char pos)
 {
+   char folder;
    settings_t *settings = config_get_ptr();
 
-   switch (settings->uints.menu_thumbnails)
-   {
-      case 1:
-         return "Named_Snaps";
-      case 2:
-         return "Named_Titles";
-      case 3:
-         return "Named_Boxarts";
-      case 0:
-      default:
-         break;
-   }
+   if (pos == 'R')
+      folder = settings->uints.menu_thumbnails;
+   if (pos == 'L')
+      folder = settings->uints.menu_left_thumbnails;
 
-   return msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF);
-}
-
-static const char *xmb_left_thumbnails_ident(void)
-{
-   settings_t *settings = config_get_ptr();
-
-   switch (settings->uints.menu_left_thumbnails)
+   switch (folder)
    {
       case 1:
          return "Named_Snaps";
@@ -1059,7 +1045,7 @@ static void xmb_update_thumbnail_path(void *data, unsigned i, char pos)
 
       if (string_is_equal(core_name, "imageviewer"))
       {
-         if (pos == 'R' || (pos == 'L' && string_is_equal(xmb_thumbnails_ident(),
+         if (pos == 'R' || (pos == 'L' && string_is_equal(xmb_thumbnails_ident('R'),
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF))))
          {
             if (!string_is_empty(entry.label))
@@ -1093,10 +1079,10 @@ static void xmb_update_thumbnail_path(void *data, unsigned i, char pos)
       /* Append Named_Snaps/Named_Boxarts/Named_Titles */
       if (pos ==  'R')
          fill_pathname_join(tmp_new2, new_path,
-               xmb_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
+               xmb_thumbnails_ident('R'), PATH_MAX_LENGTH * sizeof(char));
       if (pos ==  'L')
          fill_pathname_join(tmp_new2, new_path,
-               xmb_left_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
+               xmb_thumbnails_ident('L'), PATH_MAX_LENGTH * sizeof(char));
 
       strlcpy(new_path, tmp_new2,
             PATH_MAX_LENGTH * sizeof(char));
@@ -1308,8 +1294,8 @@ static void xmb_selection_pointer_changed(
    menu_list_t     *menu_list = NULL;
    file_list_t *selection_buf = menu_entries_get_selection_buf_ptr(0);
    size_t selection           = menu_navigation_get_selection();
-   const char *thumb_ident    = xmb_thumbnails_ident();
-   const char *lft_thumb_ident= xmb_left_thumbnails_ident();
+   const char *thumb_ident    = xmb_thumbnails_ident('R');
+   const char *lft_thumb_ident= xmb_thumbnails_ident('L');
 
    menu_entries_ctl(MENU_ENTRIES_CTL_LIST_GET, &menu_list);
    menu_entry_init(&entry);
@@ -1904,7 +1890,7 @@ static void xmb_list_switch(xmb_handle_t *xmb)
       xmb_list_switch_new(xmb, selection_buf, dir, selection);
    xmb->categories_active_idx_old = (unsigned)xmb->categories_selection_ptr;
 
-   if (!string_is_equal(xmb_thumbnails_ident(),
+   if (!string_is_equal(xmb_thumbnails_ident('R'),
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
       menu_entry_t entry;
@@ -1920,7 +1906,7 @@ static void xmb_list_switch(xmb_handle_t *xmb)
       xmb_update_thumbnail_path(xmb, 0, 'R');
       xmb_update_thumbnail_image(xmb);
    }
-   if (!string_is_equal(xmb_left_thumbnails_ident(),
+   if (!string_is_equal(xmb_thumbnails_ident('L'),
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
       menu_entry_t entry;
@@ -2268,11 +2254,11 @@ static void xmb_populate_entries(void *data,
    {
       xmb_selection_pointer_changed(xmb, false);
       menu_driver_ctl(RARCH_MENU_CTL_UNSET_PREVENT_POPULATE, NULL);
-      if (!string_is_equal(xmb_thumbnails_ident(),
+      if (!string_is_equal(xmb_thumbnails_ident('R'),
                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
          xmb_update_thumbnail_image(xmb);
       xmb_update_savestate_thumbnail_image(xmb);
-      if (!string_is_equal(xmb_left_thumbnails_ident(),
+      if (!string_is_equal(xmb_thumbnails_ident('L'),
                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
          xmb_update_left_thumbnail_image(xmb);
       return;
@@ -2757,8 +2743,8 @@ static void xmb_draw_items(
    xmb_node_t *core_node       = NULL;
    size_t end                  = 0;
    uint64_t frame_count        = xmb ? xmb->frame_count : 0;
-   const char *thumb_ident     = xmb_thumbnails_ident();
-   const char *left_thumb_ident= xmb_left_thumbnails_ident();
+   const char *thumb_ident     = xmb_thumbnails_ident('R');
+   const char *left_thumb_ident= xmb_thumbnails_ident('L');
 
    if (!list || !list->size || !xmb)
       return;
@@ -3137,7 +3123,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
             xmb->savestate_thumbnail_width, xmb->savestate_thumbnail_height,
             xmb->savestate_thumbnail);
    else if (xmb->thumbnail
-      && !string_is_equal(xmb_thumbnails_ident(),
+      && !string_is_equal(xmb_thumbnails_ident('R'),
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
 #ifdef XMB_DEBUG
@@ -3172,7 +3158,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
 
    }
    if (xmb->left_thumbnail
-      && !string_is_equal(xmb_left_thumbnails_ident(),
+      && !string_is_equal(xmb_thumbnails_ident('L'),
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
 
@@ -4159,10 +4145,10 @@ static void xmb_context_reset(void *data, bool is_threaded)
       xmb_context_reset_background(iconpath);
       xmb_context_reset_horizontal_list(xmb);
 
-      if (!string_is_equal(xmb_thumbnails_ident(),
+      if (!string_is_equal(xmb_thumbnails_ident('R'),
                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
          xmb_update_thumbnail_image(xmb);
-      if (!string_is_equal(xmb_thumbnails_ident(),
+      if (!string_is_equal(xmb_thumbnails_ident('R'),
                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
          xmb_update_left_thumbnail_image(xmb);
       xmb_update_savestate_thumbnail_image(xmb);
