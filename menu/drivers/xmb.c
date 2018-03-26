@@ -1059,10 +1059,19 @@ static void xmb_update_thumbnail_path(void *data, unsigned i, char pos)
 
       if (string_is_equal(core_name, "imageviewer"))
       {
-         if (!string_is_empty(entry.label))
-            strlcpy(new_path, entry.label,
-                  sizeof(new_path));
-         goto end;
+         if (pos == 'R' || (pos == 'L' && string_is_equal(xmb_thumbnails_ident(),
+            msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF))))
+         {
+            if (!string_is_empty(entry.label))
+               strlcpy(new_path, entry.label,
+                     sizeof(new_path));
+            goto end;
+         }
+         else
+         {
+                  xmb->left_thumbnail              = 0;
+                  goto end;
+         }
       }
    }
 
@@ -1911,7 +1920,6 @@ static void xmb_list_switch(xmb_handle_t *xmb)
       xmb_update_thumbnail_path(xmb, 0, 'R');
       xmb_update_thumbnail_image(xmb);
    }
-   /*FIX Needs to check if imageviewer*/
    if (!string_is_equal(xmb_left_thumbnails_ident(),
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
@@ -3167,8 +3175,6 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
       && !string_is_equal(xmb_left_thumbnails_ident(),
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
-
-      /*TEST*/
 
       float scale_factor            =
       ((settings->uints.menu_xmb_scale_factor * width) / (1920.0 * 100));
