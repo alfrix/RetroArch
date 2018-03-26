@@ -121,7 +121,6 @@ enum rarch_menu_ctl_state
    RARCH_MENU_CTL_BIND_INIT,
    RARCH_MENU_CTL_UPDATE_THUMBNAIL_PATH,
    RARCH_MENU_CTL_UPDATE_THUMBNAIL_IMAGE,
-   RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_PATH,
    RARCH_MENU_CTL_UPDATE_LEFT_THUMBNAIL_IMAGE,
    RARCH_MENU_CTL_UPDATE_SAVESTATE_THUMBNAIL_PATH,
    RARCH_MENU_CTL_UPDATE_SAVESTATE_THUMBNAIL_IMAGE,
@@ -495,7 +494,6 @@ typedef struct menu_ctx_driver
          menu_entry_t *entry, unsigned action);
    void (*update_thumbnail_path)(void *data, unsigned i);
    void (*update_thumbnail_image)(void *data);
-   void (*update_left_thumbnail_path)(void *data, unsigned i);
    void (*update_left_thumbnail_image)(void *data);
    void (*set_thumbnail_system)(void *data, char* s, size_t len);
    void (*set_thumbnail_content)(void *data, char* s, size_t len);

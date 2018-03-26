@@ -1006,7 +1006,7 @@ end:
    string_list_free(list);
 }
 
-static void xmb_update_thumbnail_path(void *data, unsigned i)
+static void xmb_update_thumbnail_path(void *data, unsigned i, char pos)
 {
    menu_entry_t entry;
    unsigned entry_type            = 0;
@@ -1081,9 +1081,13 @@ static void xmb_update_thumbnail_path(void *data, unsigned i)
 
       tmp_new2[0]                    = '\0';
 
-      /* Append Named_Snaps/Named_Boxart/Named_Titles */
-      fill_pathname_join(tmp_new2, new_path,
-            xmb_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
+      /* Append Named_Snaps/Named_Boxarts/Named_Titles */
+      if (pos ==  'R')
+         fill_pathname_join(tmp_new2, new_path,
+               xmb_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
+      if (pos ==  'L')
+         fill_pathname_join(tmp_new2, new_path,
+               xmb_left_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
 
       strlcpy(new_path, tmp_new2,
             PATH_MAX_LENGTH * sizeof(char));
@@ -1129,134 +1133,13 @@ static void xmb_update_thumbnail_path(void *data, unsigned i)
 
 end:
    if (xmb && !string_is_empty(new_path))
-      xmb->thumbnail_file_path = strdup(new_path);
-   menu_entry_free(&entry);
-}
-
-static void xmb_update_left_thumbnail_path(void *data, unsigned i)
-{
-   menu_entry_t entry;
-   unsigned entry_type            = 0;
-   char new_path[PATH_MAX_LENGTH] = {0};
-   settings_t     *settings       = config_get_ptr();
-   xmb_handle_t     *xmb          = (xmb_handle_t*)data;
-   playlist_t     *playlist       = NULL;
-   const char    *dir_thumbnails  = settings->paths.directory_thumbnails;
-
-   menu_entry_init(&entry);
-
-   if (!xmb || string_is_empty(dir_thumbnails))
-      goto end;
-
-   menu_entry_get(&entry, 0, i, NULL, true);
-
-   entry_type = menu_entry_get_type_new(&entry);
-
-   if (entry_type == FILE_TYPE_IMAGEVIEWER || entry_type == FILE_TYPE_IMAGE)
    {
-      file_list_t *selection_buf = menu_entries_get_selection_buf_ptr(0);
-      xmb_node_t *node = (xmb_node_t*)
-         file_list_get_userdata_at_offset(selection_buf, i);
-
-      if (!string_is_empty(node->fullpath))
-      {
-         if (!string_is_empty(entry.path))
-            fill_pathname_join(
-                  new_path,
-                  node->fullpath,
-                  entry.path,
-                  sizeof(new_path));
-
-         goto end;
-      }
-   }
-   else if (filebrowser_get_type() != FILEBROWSER_NONE)
-   {
-      xmb->left_thumbnail              = 0;
-      goto end;
+      if (pos == 'R')
+         xmb->thumbnail_file_path = strdup(new_path);
+      if (pos ==  'L')
+         xmb->left_thumbnail_file_path = strdup(new_path);
    }
 
-   menu_driver_ctl(RARCH_MENU_CTL_PLAYLIST_GET, &playlist);
-
-   if (playlist)
-   {
-      const char    *core_name       = NULL;
-      playlist_get_index(playlist, i,
-            NULL, NULL, NULL, &core_name, NULL, NULL);
-
-      if (string_is_equal(core_name, "imageviewer"))
-      {
-         if (!string_is_empty(entry.label))
-            strlcpy(new_path, entry.label,
-                  sizeof(new_path));
-         goto end;
-      }
-   }
-
-   /* Append thumbnail system directory */
-   if (!string_is_empty(xmb->thumbnail_system))
-      fill_pathname_join(
-            new_path,
-            dir_thumbnails,
-            xmb->thumbnail_system,
-            sizeof(new_path));
-
-   if (!string_is_empty(new_path))
-   {
-      char            *tmp_new2      = (char*)
-         malloc(PATH_MAX_LENGTH * sizeof(char));
-
-      tmp_new2[0]                    = '\0';
-
-      /* Append Named_Snaps/Named_Boxart/Named_Titles */
-      fill_pathname_join(tmp_new2, new_path,
-            xmb_left_thumbnails_ident(), PATH_MAX_LENGTH * sizeof(char));
-
-      strlcpy(new_path, tmp_new2,
-            PATH_MAX_LENGTH * sizeof(char));
-      free(tmp_new2);
-   }
-
-   /* Scrub characters that are not cross-platform and/or violate the
-    * No-Intro filename standard:
-    * http://datomatic.no-intro.org/stuff/The%20Official%20No-Intro%20Convention%20(20071030).zip
-    * Replace these characters in the entry name with underscores.
-    */
-   if (!string_is_empty(xmb->thumbnail_content))
-   {
-      char *scrub_char_pointer       = NULL;
-      char            *tmp_new       = (char*)
-         malloc(PATH_MAX_LENGTH * sizeof(char));
-      char            *tmp           = strdup(xmb->thumbnail_content);
-
-      tmp_new[0]                     = '\0';
-
-      while((scrub_char_pointer = strpbrk(tmp, "&*/:`\"<>?\\|")))
-         *scrub_char_pointer = '_';
-
-      /* Look for thumbnail file with this scrubbed filename */
-
-      fill_pathname_join(tmp_new,
-            new_path,
-            tmp, PATH_MAX_LENGTH * sizeof(char));
-
-      if (!string_is_empty(tmp_new))
-         strlcpy(new_path,
-               tmp_new, sizeof(new_path));
-
-      free(tmp_new);
-      free(tmp);
-   }
-
-   /* Append png extension */
-   if (!string_is_empty(new_path))
-      strlcat(new_path,
-            file_path_str(FILE_PATH_PNG_EXTENSION),
-            sizeof(new_path));
-
-end:
-   if (xmb && !string_is_empty(new_path))
-      xmb->left_thumbnail_file_path = strdup(new_path);
    menu_entry_free(&entry);
 }
 
@@ -1471,13 +1354,13 @@ static void xmb_selection_pointer_changed(
                if (!string_is_equal(thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'R');
                   xmb_update_thumbnail_image(xmb);
                }
                if (!string_is_equal(lft_thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_left_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'L');
                   xmb_update_left_thumbnail_image(xmb);
                }
             }
@@ -1490,13 +1373,13 @@ static void xmb_selection_pointer_changed(
                if (!string_is_equal(thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'R');
                   xmb_update_thumbnail_image(xmb);
                }
                else if (!string_is_equal(lft_thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_left_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'L');
                   xmb_update_left_thumbnail_image(xmb);
                }
             }
@@ -1506,13 +1389,13 @@ static void xmb_selection_pointer_changed(
                if (!string_is_equal(thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'R');
                   xmb_update_thumbnail_image(xmb);
                }
                else if (!string_is_equal(lft_thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
-                  xmb_update_left_thumbnail_path(xmb, i);
+                  xmb_update_thumbnail_path(xmb, i, 'L');
                   xmb_update_left_thumbnail_image(xmb);
                }
             }
@@ -1700,9 +1583,9 @@ static void xmb_list_open_new(xmb_handle_t *xmb,
    {
       if (xmb->depth < 4)
          xmb_reset_thumbnail_content(xmb);
-      xmb_update_thumbnail_path(xmb, 0);
+      xmb_update_thumbnail_path(xmb, 0, 'R');
       xmb_update_thumbnail_image(xmb);
-      xmb_update_left_thumbnail_path(xmb, 0);
+      xmb_update_thumbnail_path(xmb, 0, 'L');
       xmb_update_left_thumbnail_image(xmb);
    }
 }
@@ -2025,7 +1908,7 @@ static void xmb_list_switch(xmb_handle_t *xmb)
 
       menu_entry_free(&entry);
 
-      xmb_update_thumbnail_path(xmb, 0);
+      xmb_update_thumbnail_path(xmb, 0, 'R');
       xmb_update_thumbnail_image(xmb);
    }
    /*FIX Needs to check if imageviewer*/
@@ -2042,7 +1925,7 @@ static void xmb_list_switch(xmb_handle_t *xmb)
 
       menu_entry_free(&entry);
 
-      xmb_update_left_thumbnail_path(xmb, 0);
+      xmb_update_thumbnail_path(xmb, 0, 'L');
       xmb_update_left_thumbnail_image(xmb);
    }
 }
@@ -4996,7 +4879,6 @@ menu_ctx_driver_t menu_ctx_xmb = {
    xmb_pointer_tap,
    xmb_update_thumbnail_path,
    xmb_update_thumbnail_image,
-   xmb_update_left_thumbnail_path,
    xmb_update_left_thumbnail_image,
    xmb_set_thumbnail_system,
    xmb_set_thumbnail_content,
