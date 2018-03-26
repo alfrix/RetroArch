@@ -1131,7 +1131,7 @@ end:
    {
       if (pos == 'R')
          xmb->thumbnail_file_path = strdup(new_path);
-      if (pos ==  'L')
+      if (pos == 'L')
          xmb->left_thumbnail_file_path = strdup(new_path);
    }
 
@@ -3157,6 +3157,9 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
             xmb->thumbnail);
 
    }
+
+   /* Left Thumbnail */
+
    if (xmb->left_thumbnail
       && !string_is_equal(xmb_thumbnails_ident('L'),
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))

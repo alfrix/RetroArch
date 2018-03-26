@@ -1,6 +1,5 @@
 /*  RetroArch - A frontend for libretro.
  *  Copyright (C) 2011-2017 - Daniel De Matteis
- *  Copyright (C) 2018 - Alfredo Monclús
  *
  *  RetroArch is free software: you can redistribute it and/or modify it under the terms
  *  of the GNU General Public License as published by the Free Software Found-
@@ -415,8 +414,8 @@ static int action_bind_sublabel_subsystem_add(
 
    if (subsystem && content_get_subsystem_rom_id() < subsystem->num_roms)
       snprintf(s, len, " Current Content: %s",
-	  content_get_subsystem() == type - MENU_SETTINGS_SUBSYSTEM_ADD 
-	  ? subsystem->roms[content_get_subsystem_rom_id()].desc 
+	  content_get_subsystem() == type - MENU_SETTINGS_SUBSYSTEM_ADD
+	  ? subsystem->roms[content_get_subsystem_rom_id()].desc
 	  : subsystem->roms[0].desc);
 
    return 0;
