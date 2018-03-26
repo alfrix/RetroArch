@@ -1460,7 +1460,7 @@ static void xmb_selection_pointer_changed(
          ia             = xmb->items_active_alpha;
          iz             = xmb->items_active_zoom;
          if (!string_is_equal(thumb_ident,
-               msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)) && !string_is_equal(lft_thumb_ident,
+               msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)) || !string_is_equal(lft_thumb_ident,
                msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
          {
             if ((xmb_system_tab > XMB_SYSTEM_TAB_SETTINGS && depth == 1) ||
@@ -1493,7 +1493,7 @@ static void xmb_selection_pointer_changed(
                   xmb_update_thumbnail_path(xmb, i);
                   xmb_update_thumbnail_image(xmb);
                }
-               if (!string_is_equal(lft_thumb_ident,
+               else if (!string_is_equal(lft_thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
                   xmb_update_left_thumbnail_path(xmb, i);
@@ -1509,7 +1509,7 @@ static void xmb_selection_pointer_changed(
                   xmb_update_thumbnail_path(xmb, i);
                   xmb_update_thumbnail_image(xmb);
                }
-               if (!string_is_equal(lft_thumb_ident,
+               else if (!string_is_equal(lft_thumb_ident,
                      msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
                {
                   xmb_update_left_thumbnail_path(xmb, i);
@@ -2028,6 +2028,7 @@ static void xmb_list_switch(xmb_handle_t *xmb)
       xmb_update_thumbnail_path(xmb, 0);
       xmb_update_thumbnail_image(xmb);
    }
+   /*FIX Needs to check if imageviewer*/
    if (!string_is_equal(xmb_left_thumbnails_ident(),
             msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
@@ -2604,6 +2605,7 @@ static int xmb_draw_item(
       file_list_t *list,
       float *color,
       const char *thumb_ident,
+      const char *left_thumb_ident,
       uint64_t frame_count,
       size_t i,
       size_t current,
@@ -2709,7 +2711,11 @@ static int xmb_draw_item(
             (!string_is_equal
              (thumb_ident,
               msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF))
-             && xmb->thumbnail)
+             && xmb->thumbnail) ||
+            (!string_is_equal
+             (left_thumb_ident,
+              msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF))
+             && xmb->left_thumbnail)
          )
          ticker_limit = 40 * scale_mod[1];
       else
@@ -2861,6 +2867,7 @@ static void xmb_draw_items(
    size_t end                  = 0;
    uint64_t frame_count        = xmb ? xmb->frame_count : 0;
    const char *thumb_ident     = xmb_thumbnails_ident();
+   const char *left_thumb_ident= xmb_left_thumbnails_ident();
 
    if (!list || !list->size || !xmb)
       return;
@@ -2910,7 +2917,7 @@ static void xmb_draw_items(
             &entry,
             &mymat,
             xmb, core_node,
-            list, color, thumb_ident,
+            list, color, thumb_ident, left_thumb_ident,
             frame_count,
             i, current,
             width, height);
