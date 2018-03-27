@@ -491,7 +491,7 @@ typedef struct menu_ctx_driver
    int (*pointer_tap)(void *data, unsigned x, unsigned y, unsigned ptr,
          menu_file_list_cbs_t *cbs,
          menu_entry_t *entry, unsigned action);
-   void (*update_thumbnail_path)(void *data, unsigned i);
+   void (*update_thumbnail_path)(void *data, unsigned i, char pos);
    void (*update_thumbnail_image)(void *data);
    void (*update_left_thumbnail_image)(void *data);
    void (*set_thumbnail_system)(void *data, char* s, size_t len);

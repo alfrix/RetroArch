@@ -2200,7 +2200,7 @@ bool menu_driver_ctl(enum rarch_menu_ctl_state state, void *data)
 
             if (!menu_driver_ctx || !menu_driver_ctx->update_thumbnail_path)
                return false;
-            menu_driver_ctx->update_thumbnail_path(menu_userdata, (unsigned)selection);
+            menu_driver_ctx->update_thumbnail_path(menu_userdata, (unsigned)selection, 'R');
          }
          break;
       case RARCH_MENU_CTL_UPDATE_THUMBNAIL_IMAGE:
