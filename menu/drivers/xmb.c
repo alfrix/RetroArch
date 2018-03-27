@@ -747,8 +747,8 @@ static void xmb_draw_thumbnail(
    coords.tex_coord         = NULL;
    coords.lut_tex_coord     = NULL;
 
-   draw.width               = w * scale_mod[4];
-   draw.height              = h * scale_mod[4];
+   draw.width               = w;
+   draw.height              = h;
    draw.coords              = &coords;
    draw.matrix_data         = &mymat;
    draw.texture             = texture;
@@ -3120,7 +3120,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
             + xmb->icon_spacing_horizontal +
             xmb->icon_spacing_horizontal * 4 - xmb->icon_size / 4,
             xmb->margins_screen_top + xmb->icon_size + xmb->savestate_thumbnail_height * scale_mod[4],
-            xmb->savestate_thumbnail_width, xmb->savestate_thumbnail_height,
+            xmb->savestate_thumbnail_width * scale_mod[4], xmb->savestate_thumbnail_height * scale_mod[4],
             xmb->savestate_thumbnail);
    else if (xmb->thumbnail
       && !string_is_equal(xmb_thumbnails_ident('R'),
@@ -3153,7 +3153,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
             xmb->margins_screen_left * scale_mod[5] + xmb->icon_spacing_horizontal +
                   xmb->icon_spacing_horizontal*4 - xmb->icon_size / 4,
             xmb->margins_screen_top + xmb->icon_size + thumb_height * scale_mod[4],
-            thumb_width, thumb_height,
+            thumb_width * scale_mod[4], thumb_height * scale_mod[4],
             xmb->thumbnail);
 
    }
@@ -3164,14 +3164,29 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
       && !string_is_equal(xmb_thumbnails_ident('L'),
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
-
-      left_thumb_width  = xmb->left_thumbnail_width / scale_mod[4];
-      left_thumb_height = xmb->left_thumbnail_height / scale_mod[4];
+      float scale_factor =  (settings->uints.menu_xmb_scale_factor * width) / (1920.0 * 100);
+   
+      /* Limit thumbnail height to screen height + margin. */
+      if( xmb->margins_screen_top + xmb->icon_size + xmb->left_thumbnail_height * scale_mod[4] >=
+         (float)(height * 0.9) )
+      {
+         left_thumb_width = xmb->left_thumbnail_width *
+            (((float)(height * 0.9) - xmb->margins_screen_top - xmb->icon_size) /
+               (xmb->left_thumbnail_height * scale_mod[4]));
+         left_thumb_height = xmb->left_thumbnail_height *
+            (((float)(height * 0.9) - xmb->margins_screen_top - xmb->icon_size) /
+               (xmb->left_thumbnail_height * scale_mod[4]));
+      }
+      else
+      {
+         left_thumb_width = xmb->left_thumbnail_width;
+         left_thumb_height = xmb->left_thumbnail_height;
+      }
 
       xmb_draw_thumbnail(video_info,
       xmb, &coord_white[0], width, height,
-      xmb->margins_title_left - 10,
-      xmb->margins_screen_top + xmb->icon_size * 2.2 + left_thumb_height * scale_mod[4],
+      20 * scale_factor,
+      xmb->margins_screen_top + xmb->icon_size + left_thumb_height,
       left_thumb_width, left_thumb_height,
       xmb->left_thumbnail);
    }
