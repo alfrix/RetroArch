@@ -3165,8 +3165,14 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
          msg_hash_to_str(MENU_ENUM_LABEL_VALUE_OFF)))
    {
 
-      float scale_factor            =
-      ((settings->uints.menu_xmb_scale_factor * width) / (1920.0 * 100));
+
+      float scale_factor =  (settings->uints.menu_xmb_scale_factor * 0.01);
+      if (scale_factor > 1.3)
+         scale_factor = scale_factor * 0.7;
+      else if ((scale_factor > 1 && scale_factor < 1.19) || (scale_factor < 1 && scale_factor > 0.81))
+         scale_factor = scale_factor * 0.9;
+      else if (scale_factor != 1)
+         scale_factor = scale_factor * 0.8;
 
       left_thumb_width  = xmb->left_thumbnail_width * scale_factor;
       left_thumb_height = xmb->left_thumbnail_height * scale_factor;
@@ -3460,7 +3466,7 @@ static void xmb_layout_ps3(xmb_handle_t *xmb, int width)
 
 
    xmb->thumbnail_width          = 460.0 * scale_factor;
-   xmb->left_thumbnail_width     = 680.0 * scale_factor;
+   xmb->left_thumbnail_width     = 430.0 * scale_factor;
    xmb->savestate_thumbnail_width= 460.0 * scale_factor;
    xmb->cursor_size              = 64.0 * scale_factor;
 
