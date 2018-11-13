@@ -439,7 +439,7 @@ float gradient_morning_blue[16] = {
    170/255.0, 200/255.0, 252/255.0, 1.00,
 };
 
-static void xmb_calculate_visible_range(const xmb_handle_t *xmb,
+void xmb_calculate_visible_range(const xmb_handle_t *xmb,
       unsigned height, size_t list_size, unsigned current,
       unsigned *first, unsigned *last);
 
@@ -2705,7 +2705,7 @@ static uintptr_t xmb_icon_get_id(xmb_handle_t *xmb,
 
 }
 
-static void xmb_calculate_visible_range(const xmb_handle_t *xmb,
+void xmb_calculate_visible_range(const xmb_handle_t *xmb,
       unsigned height, size_t list_size, unsigned current,
       unsigned *first, unsigned *last)
 {
@@ -3102,6 +3102,8 @@ static void xmb_render(void *data, bool is_idle)
 
    if (!xmb)
       return;
+   xmb_layout(xmb);
+
 
    delta.current = menu_animation_get_delta_time();
 
@@ -4087,7 +4089,7 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
    menu_display_unset_viewport(video_info->width, video_info->height);
 }
 
-static void xmb_layout_ps3(xmb_handle_t *xmb, int width)
+void xmb_layout_ps3(xmb_handle_t *xmb, int width)
 {
    unsigned new_font_size, new_header_height;
    settings_t *settings          = config_get_ptr();
@@ -4202,7 +4204,7 @@ static void xmb_layout_psp(xmb_handle_t *xmb, int width)
    menu_display_set_header_height(new_header_height);
 }
 
-static void xmb_layout(xmb_handle_t *xmb)
+void xmb_layout(xmb_handle_t *xmb)
 {
    unsigned width, height, i, current, end;
    settings_t *settings       = config_get_ptr();
